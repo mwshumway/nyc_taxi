@@ -1,6 +1,7 @@
 __pycache__/
 *.py[cod]
 .DS_Store
+data/.DS_Store
 
 data/raw_data/
 data/storage/
