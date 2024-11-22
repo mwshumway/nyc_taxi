@@ -5,3 +5,5 @@ data/.DS_Store
 
 data/raw_data/
 data/storage/
+data/misc/
+data/processed_data/
