@@ -154,7 +154,7 @@ class LocationCoordScheme(TLCDataProcessor):
     Uses Uber's H3 library to convert the lat/lon coordinates to location IDs.
     """
     
-    def __init__(self, data_path, minute_interval=30, resolution=9):
+    def __init__(self, data_path, minute_interval=30, resolution=8):
         super().__init__(data_path, minute_interval)
         self.location_id_key = 'H3LocationID'  # Key for the location ID column
         self.minute_interval = minute_interval  # Round times to the nearest minute_interval
@@ -164,8 +164,21 @@ class LocationCoordScheme(TLCDataProcessor):
         """Convert the lat/lon coordinates to location IDs. Create new columns for the location IDs."""
         self.data[self.location_id_key] = self.data.apply(lambda x: h3.latlng_to_cell(x['pickup_latitude'], x['pickup_longitude'], self.resolution), axis=1)  # Convert the lat/lon coordinates to location IDs
 
-    
+    def filter_invalid_coords(self):
+        """Drop rows with invalid coordinates."""
+        # NYC latitude and longitude boundaries
+        valid_lat_range_nyc = (40.4774, 40.9176)
+        valid_lon_range_nyc = (-74.2591, -73.7004)  
 
+        len_b4 = len(self.data)
+
+        self.data = self.data[
+            (self.data['pickup_latitude'].between(*valid_lat_range_nyc)) & 
+            (self.data['pickup_longitude'].between(*valid_lon_range_nyc))
+        ]
+
+        len_after = len(self.data)
+        print(f"Dropped {len_b4 - len_after} rows with invalid coordinates.")
 
 
 if __name__ == "__main__":
@@ -184,6 +197,7 @@ if __name__ == "__main__":
     processor2.load_data()
     if 'key' in processor2.data.columns:
             processor2.data.drop(columns=['key'], inplace=True)
+    processor2.filter_invalid_coords()
     processor2.build_date_time()
     processor2.coords2id()
     processor2.count_pickups()
