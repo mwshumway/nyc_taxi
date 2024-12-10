@@ -13,5 +13,5 @@ The first animation shows a comparison between our model's predictions and the t
 
 ## Animation on monday test data
 This animation shows a comparison between our model's predictions and the true data on strictly test data points. So this figure is an appropriate measure of how the model was able to generalize to unseen data. 
-![Animation on only monday test data](visualization/monday_pickup_density.gif)
+![Animation on only monday test data](visualization/monday_pickup_density_test.gif)
 
